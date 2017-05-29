@@ -6,7 +6,7 @@ fn main() {
     let now: DateTime<Local> = Local::now();
     let state = get_state(now);
     let title = current_title(state, now);
-    println!("{}",title);
+    println!("{}", title);
 }
 
 fn current_title(state: u32, now: DateTime<Local>) -> String {
@@ -14,15 +14,21 @@ fn current_title(state: u32, now: DateTime<Local>) -> String {
 
     // Time descriptions may refer to the current or the following hour
     let mut hour_offset: u32 = 0;
-    if fuzzy_map.get(format!("S{:02}h", state % 100).as_str()).unwrap() == "next" {
+    if fuzzy_map
+           .get(format!("S{:02}h", state % 100).as_str())
+           .unwrap() == "next" {
         hour_offset = 1;
     }
 
     // Build the fuzzy time description
-   let format = fuzzy_map.get(format!("S{:02}", state % 100).as_str()).unwrap();
-   let hour_name = fuzzy_map.get(format!("H{:02}", (now.hour() + hour_offset) % 12).as_str()).unwrap();
+    let format = fuzzy_map
+        .get(format!("S{:02}", state % 100).as_str())
+        .unwrap();
+    let hour_name = fuzzy_map
+        .get(format!("H{:02}", (now.hour() + hour_offset) % 12).as_str())
+        .unwrap();
 
-   format.replace("{}",hour_name)
+    format.replace("{}", hour_name)
 }
 
 fn get_state(now: DateTime<Local>) -> u32 {
