@@ -26,12 +26,13 @@ fn main() {
 fn current_title(state: u32, now: DateTime<Local>) -> String {
 
     // Time descriptions may refer to the current or the following hour
-    let mut hour_offset: u32 = 0;
-    if FUZZY_MAP
+    let hour_offset = if FUZZY_MAP
            .get(format!("S{:02}h", state % 100).as_str())
            .unwrap() == "next" {
-        hour_offset = 1;
-    }
+        1
+    } else {
+        0
+    };
 
     // Build the fuzzy time description
     let format = FUZZY_MAP
