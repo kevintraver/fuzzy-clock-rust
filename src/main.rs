@@ -1,3 +1,6 @@
+#![feature(test)]
+
+extern crate test;
 extern crate chrono;
 extern crate serde_yaml;
 
@@ -70,4 +73,15 @@ fn get_state(now: DateTime<Local>) -> u32 {
 fn read_fuzzy_map() -> BTreeMap<String, String> {
     let fuzzy_map: BTreeMap<String, String> = serde_yaml::from_str(FUZZY_MAP).unwrap();
     fuzzy_map
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn bench_display_fuzzy_time(b: &mut Bencher) {
+        b.iter(|| main());
+    }
 }
