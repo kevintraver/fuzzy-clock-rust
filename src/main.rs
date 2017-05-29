@@ -1,12 +1,10 @@
 extern crate chrono;
-extern crate serde_derive;
 extern crate serde_yaml;
 
-use std::io;
-use std::fs::File;
-use std::io::prelude::*;
 use chrono::prelude::*;
 use std::collections::BTreeMap;
+
+static FUZZY_MAP: &'static str = include_str!("fuzzy_map.yml");
 
 fn main() {
     let now: DateTime<Local> = Local::now();
@@ -16,7 +14,7 @@ fn main() {
 }
 
 fn current_title(state: u32, now: DateTime<Local>) -> String {
-    let fuzzy_map = read_fuzzy_map().unwrap();
+    let fuzzy_map = read_fuzzy_map();
 
     // Time descriptions may refer to the current or the following hour
     let mut hour_offset: u32 = 0;
@@ -69,10 +67,7 @@ fn get_state(now: DateTime<Local>) -> u32 {
 
 }
 
-fn read_fuzzy_map() -> io::Result<BTreeMap<String, String>> {
-    let mut file = File::open("fuzzy_map.yml")?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
-    let fuzzy_map: BTreeMap<String, String> = serde_yaml::from_str(&contents).unwrap();
-    Ok(fuzzy_map)
+fn read_fuzzy_map() -> BTreeMap<String, String> {
+    let fuzzy_map: BTreeMap<String, String> = serde_yaml::from_str(FUZZY_MAP).unwrap();
+    fuzzy_map
 }
