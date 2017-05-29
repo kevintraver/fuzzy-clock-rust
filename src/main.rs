@@ -3,11 +3,17 @@
 extern crate test;
 extern crate chrono;
 extern crate serde_yaml;
+#[macro_use]
+extern crate lazy_static;
 
 use chrono::prelude::*;
 use std::collections::BTreeMap;
 
-static FUZZY_MAP: &'static str = include_str!("fuzzy_map.yml");
+static FUZZY_MAP_STRING: &'static str = include_str!("fuzzy_map.yml");
+
+lazy_static! {
+    static ref FUZZY_MAP: BTreeMap<String, String> = serde_yaml::from_str(FUZZY_MAP_STRING).unwrap();
+}
 
 fn main() {
     let now: DateTime<Local> = Local::now();
@@ -17,22 +23,18 @@ fn main() {
 }
 
 fn current_title(state: u32, now: DateTime<Local>) -> String {
-    let fuzzy_map = read_fuzzy_map();
 
     // Time descriptions may refer to the current or the following hour
     let mut hour_offset: u32 = 0;
-    if fuzzy_map
-           .get(format!("S{:02}h", state % 100).as_str())
-           .unwrap() == "next" {
+    if FUZZY_MAP.get(format!("S{:02}h", state % 100).as_str())
+        .unwrap() == "next" {
         hour_offset = 1;
     }
 
     // Build the fuzzy time description
-    let format = fuzzy_map
-        .get(format!("S{:02}", state % 100).as_str())
+    let format = FUZZY_MAP.get(format!("S{:02}", state % 100).as_str())
         .unwrap();
-    let hour_name = fuzzy_map
-        .get(format!("H{:02}", (now.hour() + hour_offset) % 12).as_str())
+    let hour_name = FUZZY_MAP.get(format!("H{:02}", (now.hour() + hour_offset) % 12).as_str())
         .unwrap();
 
     format.replace("{}", hour_name)
@@ -70,10 +72,6 @@ fn get_state(now: DateTime<Local>) -> u32 {
 
 }
 
-fn read_fuzzy_map() -> BTreeMap<String, String> {
-    let fuzzy_map: BTreeMap<String, String> = serde_yaml::from_str(FUZZY_MAP).unwrap();
-    fuzzy_map
-}
 
 #[cfg(test)]
 mod tests {
