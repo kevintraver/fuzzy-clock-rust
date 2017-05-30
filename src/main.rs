@@ -1,10 +1,14 @@
 #![feature(test)]
+#![feature(plugin)]
+#![plugin(rocket_codegen)]
+extern crate rocket;
 
 extern crate test;
 extern crate chrono;
 extern crate serde_yaml;
 #[macro_use]
 extern crate lazy_static;
+
 
 use chrono::prelude::*;
 use std::collections::BTreeMap;
@@ -16,11 +20,19 @@ lazy_static! {
         serde_yaml::from_str(FUZZY_MAP_STRING).unwrap();
 }
 
+#[get("/time")]
+fn fuzzy() -> String {
+    get_time()
+}
+
 fn main() {
+    rocket::ignite().mount("/fuzzy", routes![fuzzy]).launch();
+}
+
+fn get_time() -> String {
     let now: DateTime<Local> = Local::now();
     let state = get_state(now);
-    let title = current_title(state, now);
-    println!("{}", title);
+    current_title(state, now)
 }
 
 fn current_title(state: u32, now: DateTime<Local>) -> String {
@@ -85,6 +97,6 @@ mod tests {
 
     #[bench]
     fn bench_display_fuzzy_time(b: &mut Bencher) {
-        b.iter(|| main());
+        b.iter(|| fuzzy());
     }
 }
