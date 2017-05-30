@@ -1,7 +1,7 @@
 [package]
 name = "fuzzy_clock_rust"
 version = "0.1.0"
-authors = ["Kevin Traver <kevintraver@gmail.com>"]
+authors = ["Kevin Traver <kevintraver@gmail.com>","Morgan Nesbitt"]
 
 [dependencies]
 chrono = "0.3"
