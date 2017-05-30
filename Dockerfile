@@ -24,3 +24,10 @@ RUN curl -fsOSL $RUST_DOWNLOAD_URL \
     && tar -C /rust -xzf $RUST_ARCHIVE --strip-components=1 \
     && rm $RUST_ARCHIVE \
     && ./install.sh
+
+ADD Cargo.toml Cargo.toml
+ADD src src
+ADD rocket.toml rocket.toml 
+
+EXPOSE 8000
+CMD ["cargo", "run"]
