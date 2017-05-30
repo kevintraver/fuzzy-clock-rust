@@ -27,7 +27,8 @@ RUN curl -fsOSL $RUST_DOWNLOAD_URL \
 
 ADD Cargo.toml Cargo.toml
 ADD src src
-ADD rocket.toml rocket.toml 
+ADD Rocket.toml Rocket.toml
 
 EXPOSE 8000
+
 CMD ["cargo", "run"]
