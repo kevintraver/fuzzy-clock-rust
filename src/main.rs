@@ -8,10 +8,12 @@ extern crate chrono;
 extern crate serde_yaml;
 #[macro_use]
 extern crate lazy_static;
+extern crate clap;
 
 
 use chrono::prelude::*;
 use std::collections::BTreeMap;
+use clap::{Arg, App};
 
 static FUZZY_MAP_STRING: &'static str = include_str!("fuzzy_map.yml");
 
@@ -26,7 +28,21 @@ fn fuzzy() -> String {
 }
 
 fn main() {
-    rocket::ignite().mount("/fuzzy", routes![fuzzy]).launch();
+    let matches = App::new("Fuzzy Clock")
+        .version("0.1.0")
+        .author("Kevin Traver <kevin.traver@gmail.com>")
+        .about("Fuzzes your time")
+        .arg(Arg::with_name("server")
+            .short("s")
+            .long("server")
+            .help("Runs a server"))
+        .get_matches();
+
+    if matches.is_present("server") {
+        rocket::ignite().mount("/fuzzy", routes![fuzzy]).launch();
+    } else {
+        println!("{}", get_time());
+    }
 }
 
 fn get_time() -> String {
