@@ -5,6 +5,7 @@ authors = ["Kevin Traver <kevintraver@gmail.com>","Morgan Nesbitt"]
 
 [dependencies]
 chrono = "0.3"
+chrono-tz = "0.3.2"
 serde = "0.9"
 serde_derive = "0.9"
 serde_yaml = "0.6"
