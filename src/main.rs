@@ -5,15 +5,27 @@ extern crate rocket;
 
 extern crate test;
 extern crate chrono;
+extern crate chrono_tz;
 extern crate serde_yaml;
 #[macro_use]
 extern crate lazy_static;
 extern crate clap;
 
-
 use chrono::prelude::*;
 use std::collections::BTreeMap;
 use clap::{Arg, App};
+use chrono::TimeZone;
+use chrono_tz::Tz;
+
+struct AppState {
+    time_zone: String,
+    execution_type: ExecutionType,
+}
+
+enum ExecutionType {
+    SERVER,
+    COMMAND_LINE,
+}
 
 static FUZZY_MAP_STRING: &'static str = include_str!("fuzzy_map.yml");
 
@@ -36,6 +48,12 @@ fn main() {
             .short("s")
             .long("server")
             .help("Runs a server"))
+        .arg(Arg::with_name("timezone")
+            .short("t")
+            .long("timezone")
+            .value_name("TIMEZONE")
+            .help("Sets default timezone")
+            .takes_value(true))
         .get_matches();
 
     if matches.is_present("server") {
