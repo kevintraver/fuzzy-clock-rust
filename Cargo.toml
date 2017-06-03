@@ -11,3 +11,10 @@ serde_yaml = "0.6"
 lazy_static = "0.2.8"
 rocket = "0.2.7"
 rocket_codegen = "0.2.7"
+
+[dependencies.clap]
+version = "2.24.2"
+default-features = false
+
+# Cherry-pick the features you'd like to use
+features = [ "suggestions", "color" ]
