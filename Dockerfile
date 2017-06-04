@@ -32,6 +32,8 @@ ADD Rocket.toml Rocket.toml
 
 EXPOSE 8080
 
+ENV ROCKET_ENV=production
+
 RUN cargo build --release
 
 ENTRYPOINT ["./target/release/fuzzy_clock_rust", "--server"]
