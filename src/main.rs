@@ -1,6 +1,8 @@
 #![feature(test)]
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
+#![feature(custom_derive)]
+
 extern crate rocket;
 
 extern crate test;
@@ -37,9 +39,19 @@ lazy_static! {
         serde_yaml::from_str(FUZZY_MAP_STRING).unwrap();
 }
 
+#[derive(FromForm)]
+struct TimezoneInput {
+  timezone: Option<String>
+}
+
 #[get("/time")]
 fn fuzzy(app_state: State<AppState>) -> String {
-    get_time(app_state.inner().clone())
+    get_time(app_state.inner().clone(), None)
+}
+
+#[get("/time?<timezone_input>")]
+fn fuzzy_with_timezone_input(app_state: State<AppState>, timezone_input: TimezoneInput) -> String {
+    get_time(app_state.inner().clone(), timezone_input.timezone)
 }
 
 fn main() {
@@ -67,18 +79,22 @@ fn main() {
                 time_zone: default_time_zone,
                 execution_type: ExecutionType::SERVER
             })
-            .mount("/fuzzy", routes![fuzzy])
+            .mount("/fuzzy", routes![fuzzy,fuzzy_with_timezone_input])
             .launch();
     } else {
         println!("{}", get_time(AppState {
             time_zone: default_time_zone,
             execution_type: ExecutionType::COMMAND_LINE
-        }));
+        },None));
     }
 }
 
-fn get_time(app_state: AppState) -> String {
+fn get_time(app_state: AppState, timezone_input: Option<String>) -> String {
     let now = match app_state.execution_type {
+        ExecutionType::SERVER if true => {
+            let time_zone: Tz = timezone_input.unwrap_or("UTC".into()).parse().expect("Please enter a valid timezone");
+            Local::now().with_timezone(&time_zone).naive_local()
+        },
         ExecutionType::SERVER if app_state.time_zone.is_some() => {
             let time_zone: Tz = app_state.time_zone.unwrap().parse().expect("Please enter a valid timezone");
             Local::now().with_timezone(&time_zone).naive_local()
