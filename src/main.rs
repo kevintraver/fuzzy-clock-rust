@@ -39,19 +39,14 @@ lazy_static! {
         serde_yaml::from_str(FUZZY_MAP_STRING).unwrap();
 }
 
-#[derive(FromForm)]
-struct TimezoneInput {
-  timezone: Option<String>
-}
-
 #[get("/time")]
 fn fuzzy(app_state: State<AppState>) -> String {
     get_time(app_state.inner().clone(), None)
 }
 
 #[get("/time?<timezone_input>")]
-fn fuzzy_with_timezone_input(app_state: State<AppState>, timezone_input: TimezoneInput) -> String {
-    get_time(app_state.inner().clone(), timezone_input.timezone)
+fn fuzzy_with_timezone_input(app_state: State<AppState>, timezone_input: Option<String>) -> String {
+    get_time(app_state.inner().clone(), timezone_input)
 }
 
 fn main() {
