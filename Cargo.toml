@@ -4,14 +4,14 @@ version = "0.1.0"
 authors = ["Kevin Traver <kevintraver@gmail.com>","Morgan Nesbitt"]
 
 [dependencies]
-chrono = "0.3"
-chrono-tz = "0.3.2"
-serde = "0.9"
-serde_derive = "0.9"
-serde_yaml = "0.6"
-lazy_static = "0.2.8"
-rocket = "0.2.7"
-rocket_codegen = "0.2.7"
+chrono = "0.4.19"
+chrono-tz = "0.6.0"
+serde = "1.0.130"
+serde_derive = "1.0.130"
+serde_yaml = "0.8.21"
+lazy_static = "1.4.0"
+rocket = "0.4.10"
+rocket_codegen = "0.4.10"
 
 [dependencies.clap]
 version = "2.24.2"

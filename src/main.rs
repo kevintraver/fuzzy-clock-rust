@@ -1,9 +1,9 @@
 #![feature(test)]
 #![feature(plugin)]
-#![plugin(rocket_codegen)]
-#![feature(custom_derive)]
 
-extern crate rocket;
+#![feature(proc_macro_hygiene, decl_macro)]
+
+#[macro_use] extern crate rocket;
 
 extern crate test;
 extern crate chrono;
@@ -99,7 +99,7 @@ fn get_time(app_state: AppState, timezone_input: Option<String>) -> String {
             let time_zone: Tz = app_state.time_zone.unwrap().parse().expect("Please enter a valid timezone");
             Local::now().with_timezone(&time_zone).naive_local()
         },
-        ExecutionType::SERVER if app_state.time_zone.is_none() => UTC::now().naive_utc(),
+        ExecutionType::SERVER if app_state.time_zone.is_none() => Utc::now().naive_utc(),
         ExecutionType::COMMAND_LINE if app_state.time_zone.is_some() => {
             let time_zone: Tz = app_state.time_zone.unwrap().parse().expect("Please enter a valid timezone");
             Local::now().with_timezone(&time_zone).naive_local()
